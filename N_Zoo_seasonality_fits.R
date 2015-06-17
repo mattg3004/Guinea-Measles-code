@@ -104,6 +104,12 @@ estimate.susceptibility.5.group.N.Zoo.with.seasonality <- function(waifw.init, x
 
 
 
+waifw.5.groups =  rbind(c(6.9 , 3 , 3/2 , 2/3,  0.5 ) * state.5.group[1],
+                        c(3 , 6.9 , 3/2 , 2/3,  0.5 ) * state.5.group[2],
+                        c(3/2 , 2/3, 3.5 , 3.5, 0.5 ) * state.5.group[3],
+                        c(3/2 , 2/3, 3.5 , 3.5, 0.5 ) * state.5.group[4],
+                        c(0.5 , 0.5, 0.5 , 0.5, 1.6 ) * state.5.group[5])
+
 time.length = 10
 source("Data_NZoo_week13.R")
 list[N.Zoo.seasonality.fit.13, N.Zoo.seasonality.13] = estimate.susceptibility.5.group.N.Zoo.with.seasonality(waifw.init = t(waifw.5.groups), x = x.5.group[1:8,],
