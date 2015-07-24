@@ -21,56 +21,56 @@ list <- structure(NA,class="result")
 ###############
 ### Initially, we fit the proportion of susceptibles if we split the population into 4 age groups, <1's, 1-4, 5-14, 15+.
 ### Given an R_0, we fit the susceptilbe proportion of each of these groups by assuming that the epidemic is fully observed in N'Zoo.
-###############
-
-Guinea_model_tsir <- '
-data {
-  int<lower=0> N;       // week sample size
-  int<lower=0> M;       // number of age groups
-  int y[N, M];          // infection data by age group
-  real phi[N, M];       // force of infection on each age group by week, dependent on WAIFW and R_0 - Klepac paper method
-  real state[M];        // population size of each age group
-  int cum_cases[N, M];  // cumulative cases by week and age group
-}
-
-parameters {
-// fit the susceptible proportion by age given a value of R_0
-// s1 is proportion of susceptibles in group 1 (Under 1s), s2 for group 2 etc.
-
-  real <upper = 1> s1;    // s1 - susceptibility in Under 1s
-  real <upper = 1> s2;    // s2 - susceptibility in 1-4
-  real <upper = 1> s3;    // s3 - susceptibility in 5-14
-  real <upper = 1> s4;    // s4 - susceptibility in 15+
-}
-transformed parameters {
-}
-model {
-
-// We assume that the number of cases at time t is dependent on number of cases from two weeks previous (this is contained in phi) and
-// the number of susceptibles in the age group. Assuming that the epidemic is fully observed (as is thought to be true for NZoo),
-// the likelihood of observing the cases we did is assumed to be given by a poisson distribution.
-// s1 * state[1] gives the initial number of susceptibles in group 1 and subtracting cum_cases from this gives the number of susceptibles at time t.
-// Same applies for other groups. Looping over m is for the different age groups, over n gives the different weeks in the dataset.
-
-  
-  for (m in 1 : M){
-    for (n in 1 : N){
-      if(m == 1){
-        y[n, m] ~ poisson((s1 * state[1] - cum_cases[n, m])  * phi[n, m]);  
-      }
-      if(m == 2){
-        y[n, m] ~ poisson((s2 * state[2] - cum_cases[n, m])  * phi[n, m]);  
-      }
-      if(m == 3){
-        y[n, m] ~ poisson((s3 * state[3] - cum_cases[n, m] ) * phi[n, m]);  
-      }
-      if(m == 4){
-        y[n, m] ~ poisson((s4 * state[4] - cum_cases[n, m]) * phi[n, m]);  
-      }
-    }
-  }
-}
-'
+# ###############
+# 
+# Guinea_model_tsir <- '
+# data {
+#   int<lower=0> N;       // week sample size
+#   int<lower=0> M;       // number of age groups
+#   int y[N, M];          // infection data by age group
+#   real phi[N, M];       // force of infection on each age group by week, dependent on WAIFW and R_0 - Klepac paper method
+#   real state[M];        // population size of each age group
+#   int cum_cases[N, M];  // cumulative cases by week and age group
+# }
+# 
+# parameters {
+# // fit the susceptible proportion by age given a value of R_0
+# // s1 is proportion of susceptibles in group 1 (Under 1s), s2 for group 2 etc.
+# 
+#   real <upper = 1> s1;    // s1 - susceptibility in Under 1s
+#   real <upper = 1> s2;    // s2 - susceptibility in 1-4
+#   real <upper = 1> s3;    // s3 - susceptibility in 5-14
+#   real <upper = 1> s4;    // s4 - susceptibility in 15+
+# }
+# transformed parameters {
+# }
+# model {
+# 
+# // We assume that the number of cases at time t is dependent on number of cases from two weeks previous (this is contained in phi) and
+# // the number of susceptibles in the age group. Assuming that the epidemic is fully observed (as is thought to be true for NZoo),
+# // the likelihood of observing the cases we did is assumed to be given by a poisson distribution.
+# // s1 * state[1] gives the initial number of susceptibles in group 1 and subtracting cum_cases from this gives the number of susceptibles at time t.
+# // Same applies for other groups. Looping over m is for the different age groups, over n gives the different weeks in the dataset.
+# 
+#   
+#   for (m in 1 : M){
+#     for (n in 1 : N){
+#       if(m == 1){
+#         y[n, m] ~ poisson((s1 * state[1] - cum_cases[n, m])  * phi[n, m]);  
+#       }
+#       if(m == 2){
+#         y[n, m] ~ poisson((s2 * state[2] - cum_cases[n, m])  * phi[n, m]);  
+#       }
+#       if(m == 3){
+#         y[n, m] ~ poisson((s3 * state[3] - cum_cases[n, m] ) * phi[n, m]);  
+#       }
+#       if(m == 4){
+#         y[n, m] ~ poisson((s4 * state[4] - cum_cases[n, m]) * phi[n, m]);  
+#       }
+#     }
+#   }
+# }
+# '
 
 
 
@@ -78,57 +78,57 @@ model {
 ### We split the population into 5 age groups here, <1's, 1-4, 5-10, 11-15, 16+, and use the same method
 ### as for the 4 age groups to fit susceptible proportions in each group.
 #######################
-
-Guinea_model_tsir_5_groups <- '
-data {
-  int<lower=0> N;       // week sample size
-  int<lower=0> M;       // number of age groups
-  int y[N, M];          // infection data by age group
-  real phi[N, M];       // force of infection on each age group by week, dependent on WAIFW and R_0 - Klepac paper method
-  real state[M];        // population size of each age group
-  int cum_cases[N, M];  // cumulative cases by week and age group
-}
-
-parameters {
-// fit the susceptible proportion by age given a value of R_0
-// s1 is proportion of susceptibles in group 1 (Under 1s), s2 for group 2 etc.
-  real <upper = 1> s1;    // s1 - susceptibility in Under 1s
-  real <upper = 1> s2;    // s2 - susceptibility in 1-4
-  real <upper = 1> s3;    // s3 - susceptibility in 5-10
-  real <upper = 1> s4;    // s4 - susceptibility in 11-15
-  real <upper = 1> s5;    // s5 - susceptibility in 16+
-}
-transformed parameters {
-}
-model {
-
-// We assume that the number of cases at time t is dependent on number of cases from two weeks previous (this is contained in phi) and
-// the number of susceptibles in the age group. Assuming that the epidemic is fully observed (as is thought to be true for NZoo),
-// the likelihood of observing the cases we did is assumed to be given by a poisson distribution.
-// s1 * state[1] gives the initial number of susceptibles in group 1 and subtracting cum_cases from this gives the number of susceptibles at time t.
-// Same applies for other groups. Looping over m is for the different age groups, over n gives the different weeks in the dataset.
-
-  for (m in 1 : M){
-    for (n in 1 : N){
-      if(m == 1){
-        y[n, m] ~ poisson((s1 * state[1] - cum_cases[n, m]) * phi[n, m]);  
-      }
-      if(m == 2){
-        y[n, m] ~ poisson((s2 * state[2] - cum_cases[n, m]) * phi[n, m]);  
-      }
-      if(m == 3){
-        y[n, m] ~ poisson((s3 * state[3] - cum_cases[n, m]) * phi[n, m]);  
-      }
-      if(m == 4){
-        y[n, m] ~ poisson((s4 * state[4] - cum_cases[n, m]) * phi[n, m]);  
-      }
-      if(m == 4){
-        y[n, m] ~ poisson((s5 * state[5] - cum_cases[n, m]) * phi[n, m]);  
-      }
-    }
-  }
-}
-'
+# 
+# Guinea_model_tsir_5_groups <- '
+# data {
+#   int<lower=0> N;       // week sample size
+#   int<lower=0> M;       // number of age groups
+#   int y[N, M];          // infection data by age group
+#   real phi[N, M];       // force of infection on each age group by week, dependent on WAIFW and R_0 - Klepac paper method
+#   real state[M];        // population size of each age group
+#   int cum_cases[N, M];  // cumulative cases by week and age group
+# }
+# 
+# parameters {
+# // fit the susceptible proportion by age given a value of R_0
+# // s1 is proportion of susceptibles in group 1 (Under 1s), s2 for group 2 etc.
+#   real <upper = 1> s1;    // s1 - susceptibility in Under 1s
+#   real <upper = 1> s2;    // s2 - susceptibility in 1-4
+#   real <upper = 1> s3;    // s3 - susceptibility in 5-10
+#   real <upper = 1> s4;    // s4 - susceptibility in 11-15
+#   real <upper = 1> s5;    // s5 - susceptibility in 16+
+# }
+# transformed parameters {
+# }
+# model {
+# 
+# // We assume that the number of cases at time t is dependent on number of cases from two weeks previous (this is contained in phi) and
+# // the number of susceptibles in the age group. Assuming that the epidemic is fully observed (as is thought to be true for NZoo),
+# // the likelihood of observing the cases we did is assumed to be given by a poisson distribution.
+# // s1 * state[1] gives the initial number of susceptibles in group 1 and subtracting cum_cases from this gives the number of susceptibles at time t.
+# // Same applies for other groups. Looping over m is for the different age groups, over n gives the different weeks in the dataset.
+# 
+#   for (m in 1 : M){
+#     for (n in 1 : N){
+#       if(m == 1){
+#         y[n, m] ~ poisson((s1 * state[1] - cum_cases[n, m]) * phi[n, m]);  
+#       }
+#       if(m == 2){
+#         y[n, m] ~ poisson((s2 * state[2] - cum_cases[n, m]) * phi[n, m]);  
+#       }
+#       if(m == 3){
+#         y[n, m] ~ poisson((s3 * state[3] - cum_cases[n, m]) * phi[n, m]);  
+#       }
+#       if(m == 4){
+#         y[n, m] ~ poisson((s4 * state[4] - cum_cases[n, m]) * phi[n, m]);  
+#       }
+#       if(m == 4){
+#         y[n, m] ~ poisson((s5 * state[5] - cum_cases[n, m]) * phi[n, m]);  
+#       }
+#     }
+#   }
+# }
+# '
 
 #######################
 ### This function takes in a WAIFW and returns a WAIFW that corresponds to a specified R_0
@@ -406,7 +406,7 @@ simulate.with.given.R0.and.sus.dist.waifw.groups <- function(R0, sus.dist, time.
 
 simulate.with.given.R0.and.sus.dist.waifw.groups.5.groups <- function(sus.dist, time.length, num.sims,
                                                                       cases.by.age.group = cases.by.age.group,
-                                                                      waifw.init, state){ 
+                                                                      waifw.init, state, first.week = 14){ 
   
   
   ### Initialize the variables we want to output from the function. These are, for each simulation, the attack rate over each age group, the initial number of susceptibles in each age group, and the number of infections in each age group.
@@ -414,7 +414,7 @@ simulate.with.given.R0.and.sus.dist.waifw.groups.5.groups <- function(sus.dist, 
   initial.sus = matrix(0, num.sims, 5)
   end.sus = matrix(0, num.sims, 5)
   Infections = array(0, c(length(state), time.length, num.sims))
-  
+  denom = sum(state)
   ### Perform a loop for each of the simulations
   for(i in 1 : num.sims){
     
@@ -425,7 +425,13 @@ simulate.with.given.R0.and.sus.dist.waifw.groups.5.groups <- function(sus.dist, 
     
     ### Select a value of R_0 to use in the simulation
     R0 = sample(sus.dist$R02, 1)
-    alpha = sample(sus.dist$alpha, 1)
+    
+    alpha = 0.3
+    if( length(sus.dist$alpha > 0)){
+      alpha = sample(sus.dist$alpha, 1)
+    }
+    
+
     ### This susceptibility is for before the epidemic began, therefore we subtract any susceptibles who were infected in the outbreak up to the end of the data.
     sus = round(start.sus.proportion * state) - colSums(cases.by.age.group)
     
@@ -446,7 +452,7 @@ simulate.with.given.R0.and.sus.dist.waifw.groups.5.groups <- function(sus.dist, 
     for(j in 1 : time.length){
       
       ### Calculate the waifw, which takes into account the seasonality of the outbreak and also calculate the force of infection by age group, which is dependent on the waifw and the number of infecteds in each age group.
-      waifw = output.waifw(waifw.init, R0 * (1 + cos((4/12 + j/48)  * 2 *  pi) * alpha), state)
+      waifw = output.waifw(waifw.init, R0 * (1 + cos((3/12 + j/52 + (first.week - 14)/52)  * 2 *  pi) * alpha), state)
       phi = calc.phi.1.week(waifw, as.numeric(I.t), denom)
       
       ### Loop over each of the age group to generate the forward projections of number of cases by age group
@@ -606,9 +612,9 @@ simulate.with.reporting.rate.adjusted.cases <- function(sus.dist, time.length, n
   for(i in 1 : num.sims){
     
     ### Select a beginning susceptibility for each age group from the stan output
-    start.sus.proportion = c(sample(sus.dist$s1, 1, replace = T), sample(sus.dist$s2, 1, replace = T),
-                             sample(sus.dist$s3, 1, replace = T), sample(sus.dist$s4, 1, replace = T),
-                             sample(sus.dist$s5, 1, replace = T))
+    start.sus.proportion = c(sample(sus.dist$s[, 1], 1, replace = T), sample(sus.dist$s[, 2], 1, replace = T),
+                             sample(sus.dist$s[, 3], 1, replace = T), sample(sus.dist$s[, 4], 1, replace = T),
+                             sample(sus.dist$s[, 5], 1, replace = T))
     
     cases.by.age.group = matrix(0, dim(sus.dist$Cases_by_age)[2], 5)
     for(qq in 1 : dim(sus.dist$Cases_by_age)[2]){

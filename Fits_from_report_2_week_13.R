@@ -5,7 +5,6 @@ estimate.susceptibility.and.observation.5.group.seasonality.report2.week.13 <- f
   list[ N.5.group, M.5.group, reported.cases, state, weeks] = output.data.for.given.sub.prefecture(S.prefect, population)
   ### Using the later report of cases, we only want to include cases up to week 13 in order to compare with what we were given in report 1 up to week 13.
   j = which(weeks == 13)
-  waifw.input = output.waifw(waifw = t(waifw), R_0 = R0, state = state)
   
   ### we want to include seasonality. Estimated seasonality has 0.3 * cos shape, with cos = 1 approximately at weeks 13 and 39. 
   ### Need to work out where the first week of observed cases is on this scale in order to scale correctly for seasonality.
@@ -64,7 +63,7 @@ list[Foum.fit.report2.13, Foum.est.report2.13] = estimate.susceptibility.and.obs
                                                                                                                                      population = 19438)
 
 
-Foum.ests2 = Foum.est.report2.13
+
 #output.plots.with.estimates.for.observed.data.sample.for.observed.cases(Infections.Foum.13.report2, time.length = 14, r, g, b, "Foumbadou", 
 #                                                                        Foum.est.report2.week13, obs.cases.by.week = rowSums(cases.by.age.Foum[1:which(weeks == 13),]), 
 #                                                                        num.sims, first.week = 14)
@@ -76,7 +75,7 @@ list[Gueasso.fit.report2.13, Gueasso.est.report2.13] = estimate.susceptibility.a
                                                                                                                         alpha_mean = mean(N.Zoo.seasonality$alpha), 
                                                                                                                         alpha_s = sqrt(3 * (sd(N.Zoo.seasonality.13$alpha))^2 /(pi^2)), 
                                                                                                                         sus_prior.seasonal.report2.13, S.prefect = "GUEASSO", population = 21116)
-Gueasso.ests2 = Gueasso.est.report2.13
+
 
 
 
@@ -87,7 +86,7 @@ list[Gama.fit.report2.13, Gama.est.report2.13] = estimate.susceptibility.and.obs
                                                                                                                   alpha_mean = mean(N.Zoo.seasonality$alpha), 
                                                                                                                   alpha_s = sqrt(3 * (sd(N.Zoo.seasonality.13$alpha))^2 /(pi^2)), 
                                                                                                                   sus_prior.seasonal.report2.13, S.prefect = "GAMA BEREMA", population = 20465)
-Gama.ests2 = Gama.est.report2.13
+
 
 
 list[Laine.fit.report2.13, Laine.est.report213] = estimate.susceptibility.and.observation.5.group.seasonality.report2.week.13(waifw =  t(waifw.5.groups), 
@@ -98,7 +97,7 @@ list[Laine.fit.report2.13, Laine.est.report213] = estimate.susceptibility.and.ob
                                                                                                                               alpha_s = sqrt(3 * (sd(N.Zoo.seasonality.13$alpha))^2 /(pi^2)),  
                                                                                                                               sus_prior.seasonal.report2.13, S.prefect = "LAINE", population = 16591)
 
-Laine.ests2 = Laine.est.report213
+
 
 list[Kokota.fit.report2.13, Kokota.est.report2.13] = estimate.susceptibility.and.observation.5.group.seasonality.report2.week.13(waifw =  t(waifw.5.groups), 
                                                                                                                                  R0 = mean(N.Zoo.seasonality.13$R02), 
@@ -108,7 +107,7 @@ list[Kokota.fit.report2.13, Kokota.est.report2.13] = estimate.susceptibility.and
                                                                                                                                  alpha_s = sqrt(3 * (sd(N.Zoo.seasonality.13$alpha))^2 /(pi^2)),  
                                                                                                                                  sus_prior.seasonal.report2.13, S.prefect = "KOKOTA", population = 14732)
 
-Kokota.ests2 = Kokota.est.report2.13
+
 
 list[Cu.Lola.fit.report2.13, Cu.Lola.est.report2.13] = estimate.susceptibility.and.observation.5.group.seasonality.report2.week.13(waifw =  t(waifw.5.groups), 
                                                                                                                                    R0 = mean(N.Zoo.seasonality.13$R02), 
@@ -117,7 +116,7 @@ list[Cu.Lola.fit.report2.13, Cu.Lola.est.report2.13] = estimate.susceptibility.a
                                                                                                                                    alpha_mean = mean(N.Zoo.seasonality$alpha), 
                                                                                                                                    alpha_s = sqrt(3 * (sd(N.Zoo.seasonality.13$alpha))^2 /(pi^2)), 
                                                                                                                                    sus_prior.seasonal.report2.13, S.prefect = "CU LOLA", population = 49993)
-Cu.Lola.ests2 = Cu.Lola.est.report2.13
+
 
 ############################################################################################################################################################
 ############################################################################################################################################################
@@ -134,7 +133,7 @@ list[Infections.Foum.13.report2, a, i] = simulate.with.R0.and.sus.dist.obs.rates
                                                                                  time.length = 14, num.sims,
                                                                                  cases.by.age.group = cases.by.age.Foum[1:which(weeks == 13),],
                                                                                  waifw.init = t(waifw.5.groups), state.Foum)
-Foum.sims2 = Infections.Foum.13.report2
+
 
 
 list[ N.5.group, M.5.group, cases.by.age.Gueasso, state.Gueasso, weeks] = output.data.for.given.sub.prefecture(S.prefect = "GUEASSO",total.pop =  21116)
@@ -143,7 +142,7 @@ list[Infections.Gueasso.13.report2, a, i] = simulate.with.R0.and.sus.dist.obs.ra
                                                                                     cases.by.age.group = cases.by.age.Gueasso[1:which(weeks == 13),],
                                                                                     waifw.init = t(waifw.5.groups), state.Gueasso)
 
-Gueasso.sims2 = Infections.Gueasso.13.report2
+
 
 
 list[ N.5.group, M.5.group, cases.by.age.Gama, state.Gama, weeks] = output.data.for.given.sub.prefecture(S.prefect = "GAMA BEREMA",total.pop =  20465)
@@ -151,7 +150,7 @@ list[Infections.Gama.13.report2, attack.rate.NZoo.13, initial.sus.NZoo.13] = sim
                                                                                                                      time.length = 14, num.sims,
                                                                                                                      cases.by.age.group = cases.by.age.Gama[1:which(weeks == 13),],
                                                                                                                      waifw.init = t(waifw.5.groups), state.Gama)
-Gama.sims2 = Infections.Gama.13.report2
+
 
 
 list[ N.5.group, M.5.group, cases.by.age.Laine, state.Laine, weeks] = output.data.for.given.sub.prefecture(S.prefect = "LAINE",total.pop =  16591)
@@ -160,7 +159,7 @@ list[Infections.Laine.13.report2, a, i] = simulate.with.R0.and.sus.dist.obs.rate
                                                                                    cases.by.age.group = cases.by.age.Laine[1:which(weeks == 13),],
                                                                                    waifw.init = t(waifw.5.groups), state.Laine)
 
-Laine.sims2 = Infections.Laine.13.report2
+
 
 list[ N.5.group, M.5.group, cases.by.age.Kokota, state.Kokota, weeks] = output.data.for.given.sub.prefecture(S.prefect = "KOKOTA",total.pop =  14732)
 list[Infections.Kokota.13.report2, a, i] = simulate.with.R0.and.sus.dist.obs.rates(Kokota.est.report2.13, Kokota.est.report2.13$R02, 
@@ -168,7 +167,7 @@ list[Infections.Kokota.13.report2, a, i] = simulate.with.R0.and.sus.dist.obs.rat
                                                                                    cases.by.age.group = cases.by.age.Kokota.13[1:which(weeks == 13),],
                                                                                    waifw.init = t(waifw.5.groups), state.Kokota)
 
-Kokota.sims2 = Infections.Kokota.13.report2
+
 
 list[ N.5.group, M.5.group, cases.by.age.Cu.Lola, state.Cu.Lola, weeks] = output.data.for.given.sub.prefecture(S.prefect = "CU LOLA",total.pop =  49993)
 list[Infections.Cu.Lola.13.report2, a, i] = simulate.with.R0.and.sus.dist.obs.rates(Cu.Lola.est.report2.13, Cu.Lola.est.report2.13$R02, 
@@ -176,8 +175,24 @@ list[Infections.Cu.Lola.13.report2, a, i] = simulate.with.R0.and.sus.dist.obs.ra
                                                                                     cases.by.age.group = cases.by.age.Cu.Lola.13[1:which(weeks == 13),],
                                                                                     waifw.init = t(waifw.5.groups), state.Cu.Lola)
 
-Cu.Lola.sims2 = Infections.Cu.Lola.13.report2
 
+Foum.ests2 = Foum.est.report2.13
+Foum.sims2 = Infections.Foum.13.report2
+
+Gueasso.ests2 = Gueasso.est.report2.13
+Gueasso.sims2 = Infections.Gueasso.13.report2
+
+Gama.ests2 = Gama.est.report2.13
+Gama.sims2 = Infections.Gama.13.report2
+
+Laine.ests2 = Laine.est.report213
+Laine.sims2 = Infections.Laine.13.report2
+
+Kokota.ests2 = Kokota.est.report2.13
+Kokota.sims2 = Infections.Kokota.13.report2
+
+Cu.Lola.ests2 = Cu.Lola.est.report2.13
+Cu.Lola.sims2 = Infections.Cu.Lola.13.report2
 
 save.image("Post_Week13_report2_fits.Rdata")
 #save.image("Seasonal_June_12th_Report_2.RData")
