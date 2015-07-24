@@ -2,6 +2,7 @@ library(rstan)
 source("Functions.R")
 source("Functions_for_tsir_fits.R")
 source("Forward_simulations.R")
+
 Guinea_model_tsir_with_susceptible_prior_and_seasonality <- '
 data {
   int<lower=0> N;       // week sample size
@@ -103,6 +104,59 @@ estimate.susceptibility.5.group.N.Zoo.with.seasonality <- function(waifw.init, x
 }
 
 
+estimate.susceptibility.5.group.N.Zoo.with.seasonality.biweek <- function(waifw.init, x, y, R0, state, iters, chains, R0_sd){
+  
+  ### N is the number of weeks of cases, M is the number of age groups. Can get both of these from the dimensions of case data (x or y).
+  ### M is also the number of rows and columns of the waifw.
+  N = length(x[, 1])
+  M = length(waifw.init[, 1])
+  x1 = matrix(0, 4, 5)
+  y1 = matrix(0, 4, 5)
+  for(i in 1 : 4){
+    x1[i, ] = colSums(x[seq((i-1)* 2 + 1, i*2), ])
+    y1[i, ] = colSums(y[seq((i-1)* 2 + 1, i*2), ])
+  }
+  x = x1
+  y = y1
+  N = length(x[, 1])
+  ### denom is the total population size, used to scale the WAIFW
+  denom = sum(state)
+  
+  ### cum_cases holds cumulative cases at each week by age group. Used in the TSIR code to amend the susceptible population in each age group as observed cases occur in the dataset.
+  cum_cases = matrix(0, N, M)
+  for(i in 1 : M){
+    cum_cases[, i] = cumsum(x[, i])
+  }
+  
+  ### waifw is waifw.init scaled according to the given value of R_0. This is calculated for every week, as we include seasonality with an amplitude of 0.3
+  ### phi is the attack rate by week and age group, which is dependent on the waifw and the cases from two weeks previous
+  phi = matrix(0, N, M)
+  seasonal.multiplier = matrix(0, N, 1)
+  for(i in 1 : N){
+    # waifw = output.waifw(waifw.init, R_0 * (1 + cos((3/12 - (7 - i)/48)  * 2 *  pi) * 0.3), state)
+    seasonal.multiplier[i] = 1 + cos((3/12 - (7 - i)/48)  * 2 *  pi)
+    #waifw = output.waifw(waifw.init, R_0, state) / sum(state)
+    #phi[i, ] = calc.phi.1.week(waifw, x[i, ], denom)
+  }
+  waifw = output.waifw(waifw.init, R0, state) / sum(state)
+  
+  ### Guinea.data holds the data to input into the stan code
+  Guinea.data <- list("y" = y, "x" = x, "N" = N, "M" = M,  "state" = state, "cum_cases" = cum_cases, "R0" = R0, "R0_sd" = R0_sd, 
+                      "waifw" = waifw, "seasonal_multiplier" = seasonal.multiplier)
+  
+  ### Here the stan model is run to estimate the susceptibility in the 5 age groups. 
+  fit <- stan(model_code = Guinea_model_tsir_with_susceptible_prior_and_seasonality , data = Guinea.data, iter = iters , chains = chains) 
+  
+  ### print the output of the stan model for informational purposes
+  print(fit)
+  
+  ### extract the output of the stan model, which is also the output of this function.
+  sus.est = extract(fit)
+  
+  return(list(fit, sus.est))
+}
+
+
 
 waifw.5.groups =  rbind(c(6.9 , 3   , 3/2 , 2/3, 0.5 ) * state.5.group[1],
                         c(3   , 6.9 , 3/2 , 2/3, 0.5 ) * state.5.group[2],
@@ -116,6 +170,11 @@ list[N.Zoo.seasonality.fit.13, N.Zoo.seasonality.13] = estimate.susceptibility.5
                                                                                                               y = y.5.group[1:8,], R0 = 18, state = state.5.group, 
                                                                                                               iters = 2000, chains = 4, R0_sd = 4)
 
+
+list[N.Zoo.seasonality.fit.13.biweek, N.Zoo.seasonality.13.biweek] = estimate.susceptibility.5.group.N.Zoo.with.seasonality.biweek(waifw.init = t(waifw.5.groups), x = x.5.group[1:8,],
+                                                                                                              y = y.5.group[1:8,], R0 = 18, state = state.5.group, 
+                                                                                                              iters = 2000, chains = 4, R0_sd = 4)
+
 list[Infections.NZoo.13, a, i] = simulate.with.given.R0.and.sus.dist.waifw.groups.5.groups(sus.dist = N.Zoo.seasonality.13, 
                                                                                            time.length = 14, 
                                                                                            num.sims = 1000,
@@ -123,8 +182,14 @@ list[Infections.NZoo.13, a, i] = simulate.with.given.R0.and.sus.dist.waifw.group
                                                                                            t(waifw.5.groups), 
                                                                                            state.5.group)
 
+output.plots.with.observed.cases(Infections.NZoo.13, time.length, r = 0.15, g = 0.15, b = 0.7, "N'Zoo", first.week = 14, obs.cases = rowSums(cases.by.age.group.5.group))
 
-
+#list[Infections.NZoo.13, a, i] = simulate.with.given.R0.and.sus.dist.waifw.groups.5.groups(sus.dist = NZoo.estimates.13, 
+#                                                                                           time.length = 14, 
+#                                                                                           num.sims = 1000,
+#                                                                                           cases.by.age.group = cases.by.age.group.5.group,
+#                                                                                           t(waifw.5.groups), 
+#                                                                                           state.5.group)
 
 
 source("Data_NZoo.R")     
@@ -141,7 +206,7 @@ list[Infections.NZoo, attack.rate.NZoo, initial.NZoo] = simulate.with.given.R0.a
                                                                                                                   num.sims = 1000,
                                                                                                                   cases.by.age.group = cases.by.age.group.5.group,
                                                                                                                   t(waifw.5.groups), 
-                                                                                                                  state.5.group)
+                                                                                                                  state.5.group, first.week = 18)
 
 
 list[Infections.NZoo.13.report.2, a, i] = simulate.with.given.R0.and.sus.dist.waifw.groups.5.groups(sus.dist = N.Zoo.seasonality.13.report2, 
@@ -158,4 +223,5 @@ NZoo.ests3 = N.Zoo.seasonality
 NZoo.sims1 = Infections.NZoo.13
 NZoo.sims2 = Infections.NZoo.13.report.2
 NZoo.sims3 = Infections.NZoo
+
 save.image("Post_NZoo_fits.RData")

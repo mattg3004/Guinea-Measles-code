@@ -1,4 +1,4 @@
-load("June_16.RData")
+load("Latest_workspace.RData")
 source("Output_ribbon_data_for_3_datasets.R")
 require(ggplot2)
 source("Data_NZoo_week13.R")
@@ -12,55 +12,58 @@ NZoo.ribbons = ribbon.plot.NZoo.3.sims(NZoo.sims1, NZoo.cases.report1, 13,
                                        NZoo.sims2, NZoo.cases.report2[1:10, ], 13,
                                        NZoo.sims3, NZoo.cases.report2, 17,
                                        4)
+NZoo.ribbons
 
 
-
-pdf("3ribbons.pdf", height = 7, width = 7)
+pdf("3ribbons.pdf", height = 5, width = 6)
 NZoo.ribbons
 dev.off()
 
 
 
-Foum.ribbons <- ribbon.plot.Non.NZoo.3.sims(Foum.sims1, Foum.ests1$Cases_by_age, 13,
-                                            Foum.sims2, Foum.ests2$Cases_by_age, 13,
-                                            Foum.sims3, Foum.ests3$Cases_by_age, 17,
-                                            10)
+Foum.ribbons <- ribbon.plot.Non.NZoo.3.sims(Foum.sims1.bounded, Foum.ests1.bounded$Cases_by_age, 13,
+                                            Foum.sims2.bounded, Foum.ests2.bounded$Cases_by_age, 13,
+                                            Foum.sims3.bounded, Foum.ests3.bounded$Cases_by_age, 17,
+                                            10, "Foumbadou")
+
+Foum.ribbons
+Gueasso.ribbons <- ribbon.plot.Non.NZoo.3.sims(Gueasso.sims1.bounded, Gueasso.ests1.bounded$Cases_by_age, 13,
+                                               Gueasso.sims2.bounded, Gueasso.ests2.bounded$Cases_by_age, 13,
+                                               Gueasso.sims3.bounded, Gueasso.ests3.bounded$Cases_by_age, 17,
+                                               11, "Gueasso")
 
 
-Gueasso.ribbons <- ribbon.plot.Non.NZoo.3.sims(Gueasso.sims1, Gueasso.ests1$Cases_by_age, 13,
-                                               Gueasso.sims2, Gueasso.ests2$Cases_by_age, 13,
-                                               Gueasso.sims3, Gueasso.ests3$Cases_by_age, 17,
-                                               11)
+Gama.ribbons <- ribbon.plot.Non.NZoo.3.sims(Gama.sims1.bounded, Gama.ests1.bounded$Cases_by_age, 13,
+                                            Gama.sims2.bounded, Gama.ests2.bounded$Cases_by_age, 13,
+                                            Gama.sims3.bounded, Gama.ests3.bounded$Cases_by_age, 17,
+                                            11, "Gama Berema")
 
 
+Kokota.ribbons <- ribbon.plot.Non.NZoo.3.sims(Kokota.sims1.bounded, Kokota.ests1.bounded$Cases_by_age, 13,
+                                              Kokota.sims2.bounded, Kokota.ests2.bounded$Cases_by_age, 13,
+                                              Kokota.sims3.bounded, Kokota.ests3.bounded$Cases_by_age, 17,
+                                              9,"Kokota")
 
 
-Gama.ribbons <- ribbon.plot.Non.NZoo.3.sims(Gama.sims1, Gama.ests1$Cases_by_age, 13,
-                                            Gama.sims2, Gama.ests2$Cases_by_age, 13,
-                                            Gama.sims3, Gama.ests3$Cases_by_age, 17,
-                                            11)
+Laine.ribbons <- ribbon.plot.Non.NZoo.3.sims(Laine.sims1.bounded, Laine.ests1.bounded$Cases_by_age, 13,
+                                             Laine.sims2.bounded, Laine.ests2.bounded$Cases_by_age, 13,
+                                             Laine.sims3.bounded, Laine.ests3.bounded$Cases_by_age, 17,
+                                             12, "Laine")
+
+Cu.Lola.ribbons <- ribbon.plot.Non.NZoo.3.sims(Cu.Lola.sims1.bounded, Cu.Lola.ests1.bounded$Cases_by_age, 13,
+                                               Cu.Lola.sims2.bounded, Cu.Lola.ests2.bounded$Cases_by_age, 13,
+                                               Cu.Lola.sims3.bounded, Cu.Lola.ests3.bounded$Cases_by_age, 17,
+                                               12, "Cu Lola")
+
+# Cu.Lola.ribbons.no.obs.bound <- ribbon.plot.Non.NZoo.3.sims(Cu.Lola.sims1.bounded, Cu.Lola.ests1.bounded$Cases_by_age, 13,
+#                                                Cu.Lola.sims2.bounded, Cu.Lola.ests2.bounded$Cases_by_age, 13,
+#                                                Cu.Lola.sims3.bounded, Cu.Lola.est.bounded.case.obs3$Cases_by_age, 17,
+#                                                12, "Cu Lola")
 
 
-Kokota.ribbons <- ribbon.plot.Non.NZoo.3.sims(Kokota.sims1, Kokota.ests1$Cases_by_age, 13,
-                                              Kokota.sims2, Kokota.ests2$Cases_by_age, 13,
-                                              Kokota.sims3, Kokota.ests3$Cases_by_age, 17,
-                                              9)
-
-
-Laine.ribbons <- ribbon.plot.Non.NZoo.3.sims(Laine.sims1, Laine.ests1$Cases_by_age, 13,
-                                             Laine.sims2, Laine.ests2$Cases_by_age, 13,
-                                             Laine.sims3, Laine.ests3$Cases_by_age, 17,
-                                             12)
-
-Cu.Lola.ribbons <- ribbon.plot.Non.NZoo.3.sims(Cu.Lola.sims1, Cu.Lola.ests1$Cases_by_age, 13,
-                                               Cu.Lola.sims2, Cu.Lola.ests2$Cases_by_age, 13,
-                                               Cu.Lola.sims3, Cu.Lola.ests3$Cases_by_age, 17,
-                                               12)
-Cu.Lola.ribbons +  geom_text(data = NULL, x = 5, y = 30, label = "plot mpg vs. wt")
-
-
-
-pdf("Compare_predictions_ribbons_3_datasets.pdf", width = 13, height = 15)
+pdf("Compare_predictions_ribbons_3_datasets_July_23.pdf", width = 13, height = 15)
 multiplot(NZoo.ribbons, Gueasso.ribbons, Kokota.ribbons, Cu.Lola.ribbons,
           Foum.ribbons, Gama.ribbons, Laine.ribbons, cols=2)
 dev.off()
+
+require(grid)

@@ -103,7 +103,6 @@ estimate.susceptibility.and.observation.5.group.seasonality.13 <- function(waifw
                                                                            S.prefect, population){
   
   list[ N.5.group, M.5.group, cases.by.age.group.5.group, state.5.group, weeks] = output.data.for.given.sub.prefecture.week.13(S.prefect, population)
-  waifw.input = output.waifw(waifw = t(waifw), R_0 = R0, state = state.5.group)
   
   ### we want to include seasonality. Estimated seasonality has 0.3 * cos shape, with cos = 1 approximately at weeks 13 and 39. Need to work out where the first week of observed cases is on this scale in order to scale correctly for seasonality.
   first.week.adjust = weeks[1] - 13
@@ -148,8 +147,8 @@ list[Infections.Foum.13.seasonal, attack.rate.NZoo.13, initial.sus.NZoo.13] = si
                                                                                                                       waifw.init = t(waifw.5.groups), state.Foum)
 
 
-output.plots.with.estimates.for.observed.data.sample.for.observed.cases(Infections.Foum.13.seasonal, time.length = 14, r, g, b, "Foumbadou", 
-                                                                        Foum.seasonal.est.13,obs.cases.by.week = rowSums(cases.by.age.Foum.13), num.sims, first.week = 14)
+#output.plots.with.estimates.for.observed.data.sample.for.observed.cases(Infections.Foum.13.seasonal, time.length = 14, r, g, b, "Foumbadou", 
+#                                                                        Foum.seasonal.est.13,obs.cases.by.week = rowSums(cases.by.age.Foum.13), num.sims, first.week = 14)
 
 list[Gueasso.seasonal.fit.13, Gueasso.seasonal.est.13] = estimate.susceptibility.and.observation.5.group.seasonality.13(waifw =  t(waifw.5.groups), 
                                                                                                                         R0 = mean(N.Zoo.seasonality.13$R02), 
